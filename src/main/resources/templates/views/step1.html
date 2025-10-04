@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El rincón del Cine - Películas</title>
+    <link rel="stylesheet" th:href="@{/styles/estilos.css}">
+</head>
+
+<body>
+    <div class="bas">
+        <div class="Slogan">
+            <div class="NomSitio"></div>
+        </div>
+    </div>
+    <div class="base">
+        <div class="cabecera">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="subcabecera">
+            <div class="CuentaAtrasCatro"></div>
+            <p>&nbsp;Seleccione una película</p>
+        </div>
+        <div class="cuerpo">
+            <div>
+                <a id="Idfilm1" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film1.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 1</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm2" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film2.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 2</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm3" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film3.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 3</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm4" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film4.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 4</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm5" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film5.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 5</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm6" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film6.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 6</span> - 6.5€</p>
+                </div>
+            </div>
+            <div>
+                <a id="Idfilm7" class="pelicula" th:href="@{/step2}"
+                    th:style="'background-image: url(' + @{/img/films/billboard/film7.jpg} + ' );'"></a>
+                <div class="info">
+                    <p><span>SALA 7</span> - 6.5€</p>
+                </div>
+            </div>
+        </div>
+        <div class="pie">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</body>
+
+</html>
