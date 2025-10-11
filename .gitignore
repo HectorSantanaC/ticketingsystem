@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignorar imágenes del proyecto
+/src/main/resources/static/img/
