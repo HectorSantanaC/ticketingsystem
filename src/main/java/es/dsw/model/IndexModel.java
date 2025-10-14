@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class Home {
+public class IndexModel {
 	
-	// Slogan del día
+	// Obtener slogan del día
 	public static String getSloganDelDia(DayOfWeek dia) {
 		return switch (dia) {
 			case MONDAY -> "Comienza la semana a lo grande.";
@@ -17,10 +17,11 @@ public class Home {
 	        case FRIDAY -> "No te quedes en tu casa.";
 	        case SATURDAY -> "¿Ya has hecho planes para esta noche?";
 	        case SUNDAY -> "Vente y carga las pilas.";
+	        default -> "";
 		};
 	}
 	
-	// Precio
+	// Obtener precio
 	public static String getPrecio(DayOfWeek dia) {
 		if (dia == DayOfWeek.WEDNESDAY) {
 			return "desde 3,5 €";
