@@ -8,9 +8,10 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import es.dsw.model.Step1Model;
-import es.dsw.model.IndexModel;
+import es.dsw.models.IndexModel;
+import es.dsw.models.Step1Model;
 
 @Controller
 public class MainController {
@@ -45,7 +46,15 @@ public class MainController {
 	}
 	
 	@GetMapping(value= {"/step2"})
-	public String step2() {
+	public String step2(
+			@RequestParam("sala") int sala,
+			@RequestParam("imgPelicula") String imgPelicula,
+			Model model
+		) {
+		
+		model.addAttribute("sala", sala);
+		model.addAttribute("imgPelicula", imgPelicula);
+		
 		return "views/step2";
 	}
 	

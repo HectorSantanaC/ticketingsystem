@@ -1,4 +1,4 @@
-package es.dsw.model;
+package es.dsw.models;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

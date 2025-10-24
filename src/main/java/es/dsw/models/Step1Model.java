@@ -1,4 +1,4 @@
-package es.dsw.model;
+package es.dsw.models;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -39,5 +39,5 @@ public class Step1Model {
 			case WEDNESDAY ->  3.5;
 	        default -> 6;
 		};
-	}
+	}	
 }
