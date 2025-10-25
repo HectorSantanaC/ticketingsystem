@@ -8,8 +8,10 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.dsw.models.ControlError;
 import es.dsw.models.IndexModel;
 import es.dsw.models.Step1Model;
 
@@ -47,19 +49,57 @@ public class MainController {
 	
 	@GetMapping(value= {"/step2"})
 	public String step2(
-			@RequestParam("sala") int sala,
-			@RequestParam("imgPelicula") String imgPelicula,
+			// Recoger los datos de la sala y la película
+			@RequestParam int sala,
+			@RequestParam String imgPelicula,
+			@RequestParam(defaultValue="0") int codError,
 			Model model
 		) {
 		
+		ControlError objError = new ControlError(codError);
+		
 		model.addAttribute("sala", sala);
 		model.addAttribute("imgPelicula", imgPelicula);
+		model.addAttribute("controlError", objError);
 		
 		return "views/step2";
 	}
 	
-	@GetMapping(value= {"/step3"})
-	public String step3() {
+	@PostMapping(value= {"/step3"})
+	public String formulario(
+			@RequestParam(defaultValue="", required=false) String fnom,
+			@RequestParam(defaultValue="", required=false) String fapell,
+			@RequestParam(defaultValue="", required=false) String fmail,
+			@RequestParam(defaultValue="", required=false) String frepmail,
+			@RequestParam(defaultValue="", required=false) String fdate,
+			@RequestParam(defaultValue="", required=false) String fhour,
+			@RequestParam(defaultValue="0", required=false) int fnumentradasadult,
+			@RequestParam(defaultValue="-1", required=false) int fnumentradasmen,
+			Model model
+		) {
+		
+		if (fnom == null || fnom.isBlank() ||
+		    fmail == null || fmail.isBlank() ||
+		    frepmail == null || frepmail.isBlank() ||
+		    fdate == null || fdate.isBlank() ||
+		    fhour == null || fhour.isBlank() ||
+		    fnumentradasadult <= 0) {
+			
+			return "redirect:/step2?codError=1&sala=1&imgPelicula=film1.jpg";
+		} 
+		
+		if (!fmail.equals(frepmail)) {
+			return "redirect:/step2?codError=2&sala=1&imgPelicula=film1.jpg";
+		}
+		
+		model.addAttribute("fnom", fnom);
+		model.addAttribute("fapell", fapell);
+		model.addAttribute("fmail", fmail);
+		model.addAttribute("fdate", fdate);
+		model.addAttribute("fhour", fhour);
+		model.addAttribute("fnumentradasadult", fnumentradasadult);
+		model.addAttribute("fnumentradasmen", fnumentradasmen);
+		
 		return "views/step3";
 	}
 	

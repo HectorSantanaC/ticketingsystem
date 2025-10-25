@@ -61,8 +61,12 @@
               name="fnumentradasmen" min="0" max="60" value="0" step="1" /></div>
         </div>
         <div>
+          <p th:text="${controlError.isError()} ? ${controlError.descripcionError} : ''" style="color: red; font-weight: bold;"></p>
+        </div>
+        <div>
           <div><a class="atrasbtn" th:href="@{/step1}">&lt;&lt; Atras</a><a class="homebtn"
-              th:href="@{/index}">&nbsp;</a><input type="submit" value="Siguiente &gt;&gt;" /></div>
+              th:href="@{/index}">&nbsp;</a><input type="submit" value="Siguiente &gt;&gt;" />
+          </div>
         </div>
       </form>
     </div>

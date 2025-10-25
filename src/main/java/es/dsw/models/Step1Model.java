@@ -14,7 +14,7 @@ public class Step1Model {
 			"film13.jpg", "film14.jpg")
 	);
 	
-	// Proyección de películas según el dia de la semana
+	// Proyección de películas según el día de la semana
 	public static List<String> getPeliculasDelDia(DayOfWeek dia) {
 		int numSalas;
 		
