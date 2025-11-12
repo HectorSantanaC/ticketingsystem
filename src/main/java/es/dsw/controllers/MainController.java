@@ -24,7 +24,7 @@ import es.dsw.models.Step3Model;
 @SessionAttributes({"reserva"})
 public class MainController {
 	
-	// Inicializamos el objeto de la variable de sesión
+	// Inicializa el objeto de la variable de sesión
 	@ModelAttribute("reserva")
 	public Reserva crearReserva() {
 		return new Reserva();
@@ -65,8 +65,6 @@ public class MainController {
 	public String step2(
 			// Recoger los datos de la sala y la película
 			@ModelAttribute Reserva reserva,
-			@RequestParam(required = false) String sala,
-			@RequestParam(required = false) String imgPelicula,
 			@RequestParam(defaultValue="0") int codError,
 			Model model
 		) {
@@ -75,10 +73,6 @@ public class MainController {
 	    if (reserva.getImgPelicula() == null || reserva.getImgPelicula().isBlank()) {
 	        return "redirect:/step1";
 	    }
-	    
-		// Solo actualiza si vienen por parámetro (acceso desde step1)
-		if (sala != null) reserva.setSala(sala);
-		if (imgPelicula != null) reserva.setImgPelicula(imgPelicula);
 		
 		ControlError objError = new ControlError(codError);
 		
@@ -90,33 +84,18 @@ public class MainController {
 	@PostMapping(value= {"/step3"})
 	public String formulario(
 			@ModelAttribute Reserva reserva,
-			@RequestParam(defaultValue="", required=false) String fnom,
-			@RequestParam(defaultValue="", required=false) String fapell,
-			@RequestParam(defaultValue="", required=false) String fmail,
-			@RequestParam(defaultValue="", required=false) String frepmail,
-			@RequestParam(defaultValue="", required=false) String fdate,
-			@RequestParam(defaultValue="", required=false) String fhour,
-			@RequestParam(defaultValue="1", required=false) int fnumentradasadult,
-			@RequestParam(defaultValue="0", required=false) int fnumentradasmen,
 			Model model
 		) {
 		
-		int codigoError = Step3Model.codigoError(fnom, fmail, frepmail, fdate, fhour, fnumentradasadult);
+		int codigoError = Step3Model.codigoError(reserva.getFnom(), reserva.getFmail(), 
+				reserva.getFrepmail(), reserva.getFdate(), reserva.getFhour(), 
+				reserva.getFnumentradasadult());
 		
 		if (codigoError != 0) {
 			return "redirect:/step2?codError=" + codigoError +
 			"&sala=" + reserva.getSala() + 
 			"&imgPelicula=" + reserva.getImgPelicula();
 		}
-		
-		reserva.setFnom(fnom);
-		reserva.setFapell(fapell);
-		reserva.setFmail(fmail);
-		reserva.setFrepmail(frepmail);
-		reserva.setFdate(fdate);
-		reserva.setFhour(fhour);
-		reserva.setFnumentradasadult(fnumentradasadult);
-		reserva.setFnumentradasmen(fnumentradasmen);
 		
 		return "views/step3";
 	}
