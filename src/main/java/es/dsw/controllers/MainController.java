@@ -1,8 +1,11 @@
 package es.dsw.controllers;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import es.dsw.connections.MySqlConnection;
 import es.dsw.models.ControlError;
 import es.dsw.models.IndexModel;
 import es.dsw.models.Reserva;
+import es.dsw.models.Sesion;
 import es.dsw.models.Step1Model;
 import es.dsw.models.Step3Model;
 
@@ -24,7 +29,7 @@ import es.dsw.models.Step3Model;
 @SessionAttributes({"reserva"})
 public class MainController {
 	
-	// Inicializa el objeto de la variable de sesión
+	// Inicializa la clase de la variable de sesión
 	@ModelAttribute("reserva")
 	public Reserva crearReserva() {
 		return new Reserva();
@@ -51,6 +56,34 @@ public class MainController {
 	public String step1(Model model) {
 		DayOfWeek dia = LocalDate.now().getDayOfWeek();
 		
+		MySqlConnection mySqlConnection = new MySqlConnection();
+		mySqlConnection.open();
+		List<Sesion> listaSesiones = new ArrayList<Sesion>();
+		
+		if(!mySqlConnection.isError()) {
+			ResultSet rs = mySqlConnection.executeSelect("SELECT * FROM db_filmcinema.session_film");
+			
+			try {
+				while (rs.next()) {
+					Sesion sesion = new Sesion();
+					sesion.setIdSession(rs.getInt("IDSESSION_SSF"));
+					sesion.setIdFilm(rs.getInt("IDFILM_SSF"));
+					sesion.setIdRoomCinema(rs.getInt("IDROOMCINEMA_SSF"));
+					sesion.setsActiveRow(rs.getInt("S_ACTIVEROW_SSF"));
+					sesion.setsInsertDate(rs.getString("S_INSERTDATE_SSF"));
+					sesion.setsUpdateDate(rs.getString("S_UPDATEDATE_SSF"));
+					sesion.setsIdUser(rs.getInt("S_IDUSER_SSF"));
+					listaSesiones.add(sesion);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		mySqlConnection.close();
+		
+		model.addAttribute("sesiones", listaSesiones);
+		
 		// Obtener películas del día
 		List<String> peliculas = Step1Model.getPeliculasDelDia(dia);
 		double precioPeliculas = Step1Model.getPrecioPeliculas(dia);
@@ -63,7 +96,6 @@ public class MainController {
 	
 	@GetMapping(value= {"/step2"})
 	public String step2(
-			// Recoger los datos de la sala y la película
 			@ModelAttribute Reserva reserva,
 			@RequestParam(defaultValue="0") int codError,
 			Model model
