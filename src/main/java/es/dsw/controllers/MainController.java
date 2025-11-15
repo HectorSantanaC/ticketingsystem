@@ -1,7 +1,5 @@
 package es.dsw.controllers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import es.dsw.connections.MySqlConnection;
+import es.dsw.daos.NombrePeliculaDAO;
+import es.dsw.daos.SesionProgramadaDAO;
 import es.dsw.models.ControlError;
 import es.dsw.models.IndexModel;
 import es.dsw.models.Reserva;
@@ -57,36 +56,9 @@ public class MainController {
 	public String step1(Model model) {
 		DayOfWeek dia = LocalDate.now().getDayOfWeek();
 		
-		MySqlConnection mySqlConnection = new MySqlConnection();
-		mySqlConnection.open();
+		SesionProgramadaDAO sesionProgramadaDAO = new SesionProgramadaDAO();
 		
-		List<Sesion> listaSesiones = new ArrayList<Sesion>();
-		
-		if(!mySqlConnection.isError()) {
-			ResultSet rs = mySqlConnection.executeSelect("SELECT NUMBERROOM_RCF AS NUMSALA, "
-															  + "IDFILM_SSF AS IDPELICULA, "
-															  + "IDSESSION_SSF AS IDSESION "
-													   + "FROM DB_FILMCINEMA.SESSION_FILM, "
-													   		+ "DB_FILMCINEMA.ROOMCINEMA_FILM "
-													   + "WHERE S_ACTIVEROW_SSF = 1 AND "
-													   		 + "IDROOMCINEMA_RCF = IDROOMCINEMA_SSF AND "
-													   		 + "S_ACTIVEROW_RCF = 1 "
-													   + "ORDER BY NUMBERROOM_RCF ASC");
-			
-			try {
-				while (rs.next()) {
-					Sesion sesion = new Sesion();
-					sesion.setNumSala(rs.getInt("NUMSALA"));
-					sesion.setIdPelicula(rs.getInt("IDPELICULA"));
-					sesion.setIdSesion(rs.getInt("IDSESION"));
-					listaSesiones.add(sesion);
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		mySqlConnection.close();
+		List<Sesion> listaSesiones = sesionProgramadaDAO.getAll();
 		
 		// Limitar la cantidad de sesiones según el día
 	    int numSalas = Step1Model.getNumSalas(dia);
@@ -175,27 +147,11 @@ public class MainController {
 		reserva.setButacasSeleccionadas(butacas);
 		model.addAttribute("butacasSeleccionadas", butacas);
 		
-		MySqlConnection mySqlConnection = new MySqlConnection();
-		mySqlConnection.open();
-		
-		if(!mySqlConnection.isError()) {
-			ResultSet rs = mySqlConnection.executeSelect("SELECT TITLE_RF AS PELICULA "
-													   + "FROM DB_FILMCINEMA.REPOSITORY_FILM "
-													   + "WHERE IDFILM_RF = " + reserva.getIdPelicula());
-			
-			try {
-				while (rs.next()) {
-					reserva.setPelicula(rs.getString("PELICULA"));
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		mySqlConnection.close();
+		NombrePeliculaDAO nombrePeliculaDAO = new NombrePeliculaDAO();
+		String titulo = nombrePeliculaDAO.getAll(reserva.getIdPelicula());
 		
 		// Nombre de la película
-		model.addAttribute("pelicula", reserva.getPelicula());
+		model.addAttribute("pelicula", titulo);
 		
 		// Precio de adultos, menores y total
 		model.addAttribute("totalAdultos", reserva.totalAdultos());
