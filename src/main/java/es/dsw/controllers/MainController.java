@@ -58,21 +58,26 @@ public class MainController {
 		
 		MySqlConnection mySqlConnection = new MySqlConnection();
 		mySqlConnection.open();
+		
 		List<Sesion> listaSesiones = new ArrayList<Sesion>();
 		
 		if(!mySqlConnection.isError()) {
-			ResultSet rs = mySqlConnection.executeSelect("SELECT * FROM db_filmcinema.session_film");
+			ResultSet rs = mySqlConnection.executeSelect("SELECT NUMBERROOM_RCF AS NUMSALA, "
+															  + "IDFILM_SSF AS IDPELICULA, "
+															  + "IDSESSION_SSF AS IDSESION "
+													   + "FROM DB_FILMCINEMA.SESSION_FILM, "
+													   		+ "DB_FILMCINEMA.ROOMCINEMA_FILM "
+													   + "WHERE S_ACTIVEROW_SSF = 1 AND "
+													   		 + "IDROOMCINEMA_RCF = IDROOMCINEMA_SSF AND "
+													   		 + "S_ACTIVEROW_RCF = 1 "
+													   + "ORDER BY NUMBERROOM_RCF ASC");
 			
 			try {
 				while (rs.next()) {
 					Sesion sesion = new Sesion();
-					sesion.setIdSession(rs.getInt("IDSESSION_SSF"));
-					sesion.setIdFilm(rs.getInt("IDFILM_SSF"));
-					sesion.setIdRoomCinema(rs.getInt("IDROOMCINEMA_SSF"));
-					sesion.setsActiveRow(rs.getInt("S_ACTIVEROW_SSF"));
-					sesion.setsInsertDate(rs.getString("S_INSERTDATE_SSF"));
-					sesion.setsUpdateDate(rs.getString("S_UPDATEDATE_SSF"));
-					sesion.setsIdUser(rs.getInt("S_IDUSER_SSF"));
+					sesion.setNumSala(rs.getInt("NUMSALA"));
+					sesion.setIdPelicula(rs.getInt("IDPELICULA"));
+					sesion.setIdSesion(rs.getInt("IDSESION"));
 					listaSesiones.add(sesion);
 				}
 			} catch (SQLException e) {
@@ -82,51 +87,49 @@ public class MainController {
 		}
 		mySqlConnection.close();
 		
+		// Limitar la cantidad de sesiones según el día
+	    int numSalas = Step1Model.getNumSalas(dia);
+	    if (listaSesiones.size() > numSalas) {
+	    	listaSesiones = new ArrayList<>(listaSesiones.subList(0, numSalas));
+	    }
+		
 		model.addAttribute("sesiones", listaSesiones);
-		
-		// Obtener películas del día
-		List<String> peliculas = Step1Model.getPeliculasDelDia(dia);
-		double precioPeliculas = Step1Model.getPrecioPeliculas(dia);
-		
-		model.addAttribute("peliculas", peliculas);
-		model.addAttribute("precioPeliculas", precioPeliculas);
+		model.addAttribute("precioPeliculas", Step1Model.getPrecioPeliculas(dia));
 		
 		return "views/step1";
 	}
 	
 	@GetMapping(value= {"/step2"})
-	public String step2(
-			@ModelAttribute Reserva reserva,
-			@RequestParam(defaultValue="0") int codError,
-			Model model
-		) {
+	public String step2(@ModelAttribute Reserva reserva,
+			@RequestParam(defaultValue="0") int idPelicula,
+						@RequestParam(defaultValue="0") int codError,
+						Model model) {
 		
 		// Si no hay película seleccionada, redirige a step1
-	    if (reserva.getImgPelicula() == null || reserva.getImgPelicula().isBlank()) {
+	    if (idPelicula == 0) {
 	        return "redirect:/step1";
 	    }
-		
+	    
+	    reserva.setIdPelicula(idPelicula);
+	    		
 		ControlError objError = new ControlError(codError);
 		
+		model.addAttribute("idPelicula", idPelicula);
 		model.addAttribute("controlError", objError);
 		
 		return "views/step2";
 	}
 	
 	@PostMapping(value= {"/step3"})
-	public String formulario(
-			@ModelAttribute Reserva reserva,
-			Model model
-		) {
+	public String formulario(@ModelAttribute Reserva reserva,
+							 Model model) {
 		
 		int codigoError = Step3Model.codigoError(reserva.getFnom(), reserva.getFmail(), 
 				reserva.getFrepmail(), reserva.getFdate(), reserva.getFhour(), 
 				reserva.getFnumentradasadult());
 		
 		if (codigoError != 0) {
-			return "redirect:/step2?codError=" + codigoError +
-			"&sala=" + reserva.getSala() + 
-			"&imgPelicula=" + reserva.getImgPelicula();
+			return "redirect:/step2?codError=" + codigoError + "&idPelicula=" + reserva.getIdPelicula();
 		}
 		
 		return "views/step3";

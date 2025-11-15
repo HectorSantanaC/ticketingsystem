@@ -2,7 +2,7 @@ package es.dsw.models;
 
 public class Reserva {
 	private String sala;
-	private String imgPelicula;
+	private int idPelicula;
 	private String fnom;
 	private String fapell;
 	private String fmail;
@@ -19,11 +19,11 @@ public class Reserva {
 	public void setSala(String sala) {
 		this.sala = sala;
 	}
-	public String getImgPelicula() {
-		return imgPelicula;
+	public int getIdPelicula() {
+		return idPelicula;
 	}
-	public void setImgPelicula(String imgPelicula) {
-		this.imgPelicula = imgPelicula;
+	public void setIdPelicula(int idPelicula) {
+		this.idPelicula = idPelicula;
 	}
 	public String getFnom() {
 		return fnom;

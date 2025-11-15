@@ -36,7 +36,7 @@
       <form class="Fdatares" name="Fdatareserva" method="POST" th:action="@{/step3}" th:object="${reserva}">
         <div class="mini-billboard-selected">
           <div>
-            <div th:style="'background-image: url(' + @{/img/films/billboard/{img}(img=${reserva.imgPelicula})} + ')'">
+            <div th:style="'background-image: url(/img/films/billboard/film' + ${idPelicula} + '.jpg);'">
             </div>
           </div>
         </div>
