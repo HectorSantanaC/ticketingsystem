@@ -37,6 +37,7 @@ public class MainController {
 	
 	@GetMapping(value= {"/", "/index"})
 	public String idx(Model model, SessionStatus sessionStatus) {
+		
 		sessionStatus.setComplete();
 		
 		// Determinar el día
@@ -96,12 +97,14 @@ public class MainController {
 		model.addAttribute("sesiones", listaSesiones);
 		model.addAttribute("precioPeliculas", Step1Model.getPrecioPeliculas(dia));
 		
+		
 		return "views/step1";
 	}
 	
 	@GetMapping(value= {"/step2"})
 	public String step2(@ModelAttribute Reserva reserva,
-			@RequestParam(defaultValue="0") int idPelicula,
+						@RequestParam(defaultValue="0") int idPelicula,
+						@RequestParam(defaultValue="0") int sala,
 						@RequestParam(defaultValue="0") int codError,
 						Model model) {
 		
@@ -111,6 +114,7 @@ public class MainController {
 	    }
 	    
 	    reserva.setIdPelicula(idPelicula);
+	    reserva.setSala(sala);
 	    		
 		ControlError objError = new ControlError(codError);
 		
@@ -136,15 +140,72 @@ public class MainController {
 			return "redirect:/step2?codError=" + codigoError + "&idPelicula=" + reserva.getIdPelicula();
 		}
 		
+		model.addAttribute("idPelicula", reserva.getIdPelicula());
+		
 		return "views/step3";
 	}
 	
-	@GetMapping(value= {"/step4"})
-	public String step4() {
+	@GetMapping("/step3")
+	public String volverStep3(@ModelAttribute Reserva reserva, 
+							  Model model) {
+	    
+	    int numButacas = reserva.totalButacas();
+	    
+	    if (reserva.getIdPelicula() <= 0) {
+			return "redirect:/step1";
+		} else if (numButacas <= 0) {
+			return "redirect:/step2?idPelicula=" + reserva.getIdPelicula();
+		}
+	    
+	    model.addAttribute("numButacas", numButacas);
+
+	    return "views/step3";
+	}
+	
+	@PostMapping(value= {"/step4"})
+	public String step4(@ModelAttribute Reserva reserva,
+						@RequestParam String FButacasSelected,
+						Model model) {
+		
+		String butacas = FButacasSelected.replace(";", ", ");
+		if (butacas.endsWith(", ")) {
+		    butacas = butacas.substring(0, butacas.length() - 2);
+		}
+		
+		reserva.setButacasSeleccionadas(butacas);
+		model.addAttribute("butacasSeleccionadas", butacas);
+		
+		MySqlConnection mySqlConnection = new MySqlConnection();
+		mySqlConnection.open();
+		
+		if(!mySqlConnection.isError()) {
+			ResultSet rs = mySqlConnection.executeSelect("SELECT TITLE_RF AS PELICULA "
+													   + "FROM DB_FILMCINEMA.REPOSITORY_FILM "
+													   + "WHERE IDFILM_RF = " + reserva.getIdPelicula());
+			
+			try {
+				while (rs.next()) {
+					reserva.setPelicula(rs.getString("PELICULA"));
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		mySqlConnection.close();
+		
+		// Nombre de la película
+		model.addAttribute("pelicula", reserva.getPelicula());
+		
+		// Precio de adultos, menores y total
+		model.addAttribute("totalAdultos", reserva.totalAdultos());
+		model.addAttribute("totalMenores", reserva.totalMenores());
+		model.addAttribute("total", reserva.total());
+		
 		return "views/step4";
 	}
 	
-	@GetMapping(value= {"/end"})
+	@PostMapping(value= {"/end"})
 	public String end() {
 		return "views/end";
 	}
