@@ -73,4 +73,8 @@ public class Reserva {
 	public void setFnumentradasmen(int fnumentradasmen) {
 		this.fnumentradasmen = fnumentradasmen;
 	}
+	
+	public int totalButacas() {
+		return fnumentradasadult + fnumentradasmen;
+	}
 }

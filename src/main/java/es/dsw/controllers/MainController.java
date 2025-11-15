@@ -124,6 +124,10 @@ public class MainController {
 	public String formulario(@ModelAttribute Reserva reserva,
 							 Model model) {
 		
+		int numButacas = reserva.totalButacas();
+		
+		model.addAttribute("numButacas", numButacas);
+		
 		int codigoError = Step3Model.codigoError(reserva.getFnom(), reserva.getFmail(), 
 				reserva.getFrepmail(), reserva.getFdate(), reserva.getFhour(), 
 				reserva.getFnumentradasadult());
