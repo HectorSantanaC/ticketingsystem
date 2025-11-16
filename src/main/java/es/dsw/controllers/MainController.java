@@ -142,15 +142,15 @@ public class MainController {
 						@RequestParam String FButacasSelected,
 						Model model) {
 		
-		List<String> butacasSeleccionadas = new ArrayList<>();
+		List<String> listaButacas = new ArrayList<>();
 		
 		for (String butacaSeleccionada : FButacasSelected.split(";")) {
-			butacasSeleccionadas.add(butacaSeleccionada);
+			listaButacas.add(butacaSeleccionada);
 		}
 		
-		String butacas = String.join(", ", butacasSeleccionadas);
+		String butacas = String.join(", ", listaButacas);
 		
-		reserva.setButacasSeleccionadas(butacas);
+		reserva.setButacasSeleccionadas(listaButacas);
 		model.addAttribute("butacasSeleccionadas", butacas);
 		
 		NombrePeliculaDAO nombrePeliculaDAO = new NombrePeliculaDAO();

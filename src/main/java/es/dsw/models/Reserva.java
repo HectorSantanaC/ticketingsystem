@@ -1,5 +1,8 @@
 package es.dsw.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Reserva {
 	private int sala;
 	private int idPelicula;
@@ -11,13 +14,13 @@ public class Reserva {
 	private String fhour;
 	private int fnumentradasadult;
 	private int fnumentradasmen;
-	private String butacasSeleccionadas;
 	private String pelicula;
 	private String ftitulartarjeta;
 	private String fnumtarjeta;
 	private String fMesCaduca;
 	private String fAnioCaduca;
 	private String fccstarjeta;
+	private List<String> butacasSeleccionadas = new ArrayList<>();
 	
 	// Getter y Setters
 	public int getSala() {
@@ -80,13 +83,6 @@ public class Reserva {
 	public void setFnumentradasmen(int fnumentradasmen) {
 		this.fnumentradasmen = fnumentradasmen;
 	}
-	
-	public String getButacasSeleccionadas() {
-		return butacasSeleccionadas;
-	}
-	public void setButacasSeleccionadas(String butacasSeleccionadas) {
-		this.butacasSeleccionadas = butacasSeleccionadas;
-	}
 	public String getPelicula() {
 		return pelicula;
 	}
@@ -123,4 +119,11 @@ public class Reserva {
 	public void setFccstarjeta(String fccstarjeta) {
 		this.fccstarjeta = fccstarjeta;
 	}
+	public List<String> getButacasSeleccionadas() {
+		return butacasSeleccionadas;
+	}
+	public void setButacasSeleccionadas(List<String> butacasSeleccionadas) {
+		this.butacasSeleccionadas = butacasSeleccionadas;
+	}
+	
 }
