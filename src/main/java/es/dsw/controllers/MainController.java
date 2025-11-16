@@ -142,10 +142,13 @@ public class MainController {
 						@RequestParam String FButacasSelected,
 						Model model) {
 		
-		String butacas = FButacasSelected.replace(";", ", ");
-		if (butacas.endsWith(", ")) {
-		    butacas = butacas.substring(0, butacas.length() - 2);
+		List<String> butacasSeleccionadas = new ArrayList<>();
+		
+		for (String butacaSeleccionada : FButacasSelected.split(";")) {
+			butacasSeleccionadas.add(butacaSeleccionada);
 		}
+		
+		String butacas = String.join(", ", butacasSeleccionadas);
 		
 		reserva.setButacasSeleccionadas(butacas);
 		model.addAttribute("butacasSeleccionadas", butacas);
