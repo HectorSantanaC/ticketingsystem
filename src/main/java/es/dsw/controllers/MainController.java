@@ -23,6 +23,7 @@ import es.dsw.models.Reserva;
 import es.dsw.models.Sesion;
 import es.dsw.models.Step1Model;
 import es.dsw.models.Step3Model;
+import es.dsw.models.Step4Model;
 
 @Controller
 @SessionAttributes({"reserva"})
@@ -100,7 +101,8 @@ public class MainController {
 	public String formulario(@ModelAttribute Reserva reserva,
 							 Model model) {
 		
-		int numButacas = reserva.totalButacas();
+		Step3Model step3Model = new Step3Model(reserva);
+	    int numButacas = step3Model.totalButacas();
 		
 		model.addAttribute("numButacas", numButacas);
 		
@@ -121,7 +123,8 @@ public class MainController {
 	public String volverStep3(@ModelAttribute Reserva reserva, 
 							  Model model) {
 	    
-	    int numButacas = reserva.totalButacas();
+		Step3Model step3Model = new Step3Model(reserva);
+	    int numButacas = step3Model.totalButacas();
 	    
 	    if (reserva.getIdPelicula() <= 0) {
 			return "redirect:/step1";
@@ -153,10 +156,14 @@ public class MainController {
 		// Nombre de la película
 		model.addAttribute("pelicula", titulo);
 		
+		Step4Model step4Model = new Step4Model(reserva);
+		
+		model.addAttribute("fdateFormateada", step4Model.getFdateFormateada());
+		
 		// Precio de adultos, menores y total
-		model.addAttribute("totalAdultos", reserva.totalAdultos());
-		model.addAttribute("totalMenores", reserva.totalMenores());
-		model.addAttribute("total", reserva.total());
+		model.addAttribute("totalAdultos", step4Model.totalAdultos());
+		model.addAttribute("totalMenores", step4Model.totalMenores());
+		model.addAttribute("total", step4Model.totalMenores());
 		
 		return "views/step4";
 	}
