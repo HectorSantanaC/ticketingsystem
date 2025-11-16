@@ -9,6 +9,7 @@ public class Step3Model {
 		this.reserva = reserva;
 	}
 
+	// Comprobar que están todos los datos obligatorios
 	public static int codigoError(String fnom, String fmail, String frepmail, String fdate, String fhour, int fnumentradasadult) {
 		
 		if (fnom == null || fnom.isBlank() ||
@@ -18,12 +19,12 @@ public class Step3Model {
 		    fhour == null || fhour.isBlank() ||
 		    fnumentradasadult <= 0) {
 				
-				return 1;
-			} 
+			return 1;
+		}
 			
-			if (!fmail.toLowerCase().equals(frepmail.toLowerCase())) {
-				return 2;
-			}
+		if (!fmail.toLowerCase().equals(frepmail.toLowerCase())) {
+			return 2;
+		}
 			
 		return 0;
 	}

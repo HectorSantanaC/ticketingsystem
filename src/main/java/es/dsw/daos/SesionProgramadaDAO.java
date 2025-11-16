@@ -30,7 +30,6 @@ public class SesionProgramadaDAO {
 													   		 + "IDROOMCINEMA_RCF = IDROOMCINEMA_SSF AND "
 													   		 + "S_ACTIVEROW_RCF = 1 "
 													   + "ORDER BY NUMBERROOM_RCF ASC");
-			
 			try {
 				while (rs.next()) {
 					Sesion sesion = new Sesion();

@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/styles/estilos.css}">
     <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/js/step3.js}"></script>
-    <script> let MaxNumButacasToSelect = 3; let NumButacasSelected = 0;</script>
+    <script th:inline="javascript"> let MaxNumButacasToSelect = /*[[${numButacas}]]*/ 0; let NumButacasSelected = 0;</script>
 </head>
 
 <body>
@@ -35,39 +35,42 @@
         </div>
         <div class="cuerpo">
             <div class="EntregaEntradas">
-                <p>La compra ha sido realizada con éxito. En breve se enviará un correo electrónico a
+                <p th:text="'La compra ha sido realizada con éxito. En breve se enviará un correo electrónico a ' + ${reserva.fmail}">La compra ha sido realizada con éxito. En breve se enviará un correo electrónico a
                     danielperezperez@ieselrincon.es</p>
                 <p>Si desea imprimir las entradas haga click <a th:href="@{/imrpimirTicket}" target="_blank">aquí</a>.
                     También puede capturar los códigos QR que se muestran a continuación.</p>
             </div>
             <div class="EntregaEntradas">
-                <div class="Entrada">
+                <div class="Entrada" th:each="butaca : ${butacas}">
                     <div class="EntradaCab">
                         <img th:src="@{/img/means/entrada.gif}" alt="ticket" />
                         <p class="EntrCodeTitle">Código</p>
                         <p class="EntrCodeVal">1000006372127372</p>
                         <p class="EntrPeliculaTitle">Película</p>
-                        <p class="EntrPeliculaVal">LightYear</p>
-                        <p class="EntrSala"><span>Sala:</span> 2</p>
-                        <p class="EntrFechaVal">Fecha: 15/10/2022</p>
-                        <p class="EntrHoraVal">Hora: +20:00h</p>
-                        <p class="EntrButacaVal">Fila: 5, Butaca: 2</p>
+                        <p class="EntrPeliculaVal" th:text="${reserva.pelicula}">LightYear</p>
+                        <p class="EntrSala" th:utext="'<span>Sala:</span> ' + ${reserva.sala}"><span>Sala:</span> 2</p>
+                        <p class="EntrFechaVal" th:text="'Fecha: ' + ${fdateFormateada}">Fecha: 15/10/2022</p>
+                        <p class="EntrHoraVal" th:text="'Hora: +' + ${reserva.fhour}">Hora: +20:00h</p>
+                        <p class="EntrButacaVal" th:text="'Fila: ' + ${butaca.substring(1, butaca.indexOf('B'))} 
+							+ ', Butaca: ' + ${butaca.substring(butaca.indexOf('B') + 1)}">Fila: 5, Butaca: 2
+						</p>
                     </div><!--
                 -->
                     <div class="EntradaCuer">
                         <img th:src="@{/img/means/entrada-cue.gif}" alt="ticket" />
-                        <p class="EntrPeliculaTitle">Película: <span>LightYear</span></p>
-                        <p class="EntrSalaTitle">Sala: <span>2</span></p>
-                        <p class="EntrFechaVal">15/10/2022</p>
-                        <p class="EntrHoraVal">+20:00h</p>
-                        <p class="EntrButacaVal1">Fila: 5</p>
-                        <p class="EntrButacaVal2">Butaca: 2</p>
+                        <p class="EntrPeliculaTitle" th:utext="'Película: <span>' + ${reserva.pelicula}">Película: <span>LightYear</span></p>
+                        <p class="EntrSalaTitle" th:utext="'Sala: <span>' + ${reserva.sala}">Sala: <span>2</span></p>
+                        <p class="EntrFechaVal" th:text="${fdateFormateada}">15/10/2022</p>
+                        <p class="EntrHoraVal" th:text="'+' + ${reserva.fhour}">+20:00h</p>
+                        <p class="EntrButacaVal1" th:text="'Fila: ' + ${butaca.substring(1, butaca.indexOf('B'))}">Fila: 5</p>
+                        <p class="EntrButacaVal2" th:text="'Butaca: ' + ${butaca.substring(butaca.indexOf('B') + 1)}">Butaca: 2</p>
                         <img class="ImagenQR"
                             src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=1000006372127372"
                             alt="QR" />
-
                     </div>
                 </div>
+				
+				<!--
                 <div class="Entrada">
                     <div class="EntradaCab">
                         <img th:src="@{/img/means/entrada.gif}" alt="ticket" />
@@ -79,8 +82,8 @@
                         <p class="EntrFechaVal">Fecha: 15/10/2022</p>
                         <p class="EntrHoraVal">Hora: +20:00h</p>
                         <p class="EntrButacaVal">Fila: 5, Butaca: 3</p>
-                    </div><!--
-                -->
+                    </div>
+                
                     <div class="EntradaCuer">
                         <img th:src="@{/img/means/entrada-cue.gif}" alt="ticket" />
                         <p class="EntrPeliculaTitle">Película: <span>LightYear</span></p>
@@ -106,8 +109,8 @@
                         <p class="EntrFechaVal">Fecha: 15/10/2022</p>
                         <p class="EntrHoraVal">Hora: +20:00h</p>
                         <p class="EntrButacaVal">Fila: 5, Butaca: 4</p>
-                    </div><!--
-                -->
+                    </div>
+                
                     <div class="EntradaCuer">
                         <img th:src="@{/img/means/entrada-cue.gif}" alt="ticket" />
                         <p class="EntrPeliculaTitle">Película: <span>LightYear</span></p>
@@ -122,6 +125,7 @@
 
                     </div>
                 </div>
+				-->
             </div>
             <div class="EntregaEntradas">
                 <form>

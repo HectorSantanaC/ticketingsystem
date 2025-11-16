@@ -49,7 +49,7 @@
           <p th:utext="'<span>Película:</span> ' + ${pelicula}"><span>Película:</span> LightYear</p>
           <p th:utext="'<span>Sala:</span> ' + ${reserva.sala}"><span>Sala:</span> 3</p>
           <p th:utext="'<span>Fecha:</span>' + ${fdateFormateada}"><span>Fecha:</span> 15/10/2022</p>
-          <p th:utext="'<span>Sesión:</span> ' + ${reserva.fhour}"><span>Sesión:</span> +20:00h</p>
+          <p th:utext="'<span>Sesión:</span> +' + ${reserva.fhour}"><span>Sesión:</span> +20:00h</p>
           <p th:utext="'<span>Adultos:</span> ' + ${reserva.fnumentradasadult} + ' x ' + ${totalAdultos} + '€'"><span>Adultos:</span> 2 x 6.5€</p>
           <p th:utext="'<span>&lt; 12 años:</span> ' + ${reserva.fnumentradasmen} + ' x ' + ${totalMenores} + '€'"><span>&lt; 12 años:</span> 1 x 4.5€</p>
           <p th:utext="'<span>Butacas:</span> ' + ${butacasSeleccionadas}"><span>Butacas:</span> F5B2, F5B3, F5B4</p>

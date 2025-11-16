@@ -56,7 +56,8 @@ public class MainController {
 	@GetMapping(value= {"/step1"})
 	public String step1(Model model) {
 		DayOfWeek dia = LocalDate.now().getDayOfWeek();
-		
+
+		// Conexión a base de datos para recoger el idPelicula, nº de sala e idSesion
 		SesionProgramadaDAO sesionProgramadaDAO = new SesionProgramadaDAO();
 		
 		List<Sesion> listaSesiones = sesionProgramadaDAO.getAll();
@@ -101,6 +102,7 @@ public class MainController {
 	public String formulario(@ModelAttribute Reserva reserva,
 							 Model model) {
 		
+		// Total de butacas reservadas
 		Step3Model step3Model = new Step3Model(reserva);
 	    int numButacas = step3Model.totalButacas();
 		
@@ -123,6 +125,7 @@ public class MainController {
 	public String volverStep3(@ModelAttribute Reserva reserva, 
 							  Model model) {
 	    
+		// Total de butacas reservadas
 		Step3Model step3Model = new Step3Model(reserva);
 	    int numButacas = step3Model.totalButacas();
 	    
@@ -142,6 +145,7 @@ public class MainController {
 						@RequestParam String FButacasSelected,
 						Model model) {
 		
+		// Lista de butacas seleccionadas
 		List<String> listaButacas = new ArrayList<>();
 		
 		for (String butacaSeleccionada : FButacasSelected.split(";")) {
@@ -153,14 +157,15 @@ public class MainController {
 		reserva.setButacasSeleccionadas(listaButacas);
 		model.addAttribute("butacasSeleccionadas", butacas);
 		
+		// Conexión a base de datos para recoger el nombre de la película
 		NombrePeliculaDAO nombrePeliculaDAO = new NombrePeliculaDAO();
-		String titulo = nombrePeliculaDAO.getAll(reserva.getIdPelicula());
+		String titulo = nombrePeliculaDAO.getTitulo(reserva.getIdPelicula());
+		reserva.setPelicula(titulo);
 		
-		// Nombre de la película
 		model.addAttribute("pelicula", titulo);
 		
+		// Fecha formateada dd/MM/yyyy
 		Step4Model step4Model = new Step4Model(reserva);
-		
 		model.addAttribute("fdateFormateada", step4Model.getFdateFormateada());
 		
 		// Precio de adultos, menores y total
@@ -172,7 +177,16 @@ public class MainController {
 	}
 	
 	@PostMapping(value= {"/end"})
-	public String end() {
+	public String end(@ModelAttribute Reserva reserva,
+					  Model model) {
+		
+		List<String> butacas = reserva.getButacasSeleccionadas();
+		model.addAttribute("butacas", butacas);
+		
+		// Fecha formateada dd/MM/yyyy
+		Step4Model step4Model = new Step4Model(reserva);
+		model.addAttribute("fdateFormateada", step4Model.getFdateFormateada());
+		
 		return "views/end";
 	}
 }

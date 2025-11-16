@@ -12,7 +12,7 @@ public class NombrePeliculaDAO {
 		mySqlConnection = new MySqlConnection();
 	}
 	
-	public String getAll(int idPelicula) {
+	public String getTitulo(int idPelicula) {
 		String titulo = null;
 		mySqlConnection.open();
 		
@@ -20,9 +20,8 @@ public class NombrePeliculaDAO {
 			ResultSet rs = mySqlConnection.executeSelect("SELECT TITLE_RF AS PELICULA "
 													   + "FROM DB_FILMCINEMA.REPOSITORY_FILM "
 													   + "WHERE IDFILM_RF = " + idPelicula);
-			
 			try {
-				while (rs.next()) {
+				if (rs.next()) {
 					titulo = (rs.getString("PELICULA"));
 				}
 			} catch (SQLException e) {
