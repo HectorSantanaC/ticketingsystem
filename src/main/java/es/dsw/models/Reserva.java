@@ -21,6 +21,7 @@ public class Reserva {
 	private String fAnioCaduca;
 	private String fccstarjeta;
 	private List<String> butacasSeleccionadas = new ArrayList<>();
+	private double precioTotal;
 	
 	// Getter y Setters
 	public int getSala() {
@@ -125,5 +126,10 @@ public class Reserva {
 	public void setButacasSeleccionadas(List<String> butacasSeleccionadas) {
 		this.butacasSeleccionadas = butacasSeleccionadas;
 	}
-	
+	public double getPrecioTotal() {
+		return precioTotal;
+	}
+	public void setPrecioTotal(double precioTotal) {
+		this.precioTotal = precioTotal;
+	}
 }

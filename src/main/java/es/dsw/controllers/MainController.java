@@ -171,22 +171,41 @@ public class MainController {
 		// Precio de adultos, menores y total
 		model.addAttribute("totalAdultos", step4Model.totalAdultos());
 		model.addAttribute("totalMenores", step4Model.totalMenores());
-		model.addAttribute("total", step4Model.totalMenores());
+		model.addAttribute("total", step4Model.total());
+		
+		reserva.setPrecioTotal(step4Model.total());
 		
 		return "views/step4";
 	}
 	
-	@PostMapping(value= {"/end"})
+	@GetMapping(value= {"/end"})
 	public String end(@ModelAttribute Reserva reserva,
 					  Model model) {
 		
-		List<String> butacas = reserva.getButacasSeleccionadas();
-		model.addAttribute("butacas", butacas);
+		model.addAttribute("reserva", reserva);
+		model.addAttribute("butacas", reserva.getButacasSeleccionadas());
 		
 		// Fecha formateada dd/MM/yyyy
 		Step4Model step4Model = new Step4Model(reserva);
 		model.addAttribute("fdateFormateada", step4Model.getFdateFormateada());
 		
 		return "views/end";
+	}
+	
+	@PostMapping(value={"/insert"})
+	public String insert(@ModelAttribute Reserva reserva,
+						 Model model) {
+		
+		SesionProgramadaDAO dao = new SesionProgramadaDAO();
+	    dao.setUpdate(reserva);
+
+	    // VOLVER A CARGAR LOS DATOS NECESARIOS
+	    model.addAttribute("reserva", reserva);
+	    model.addAttribute("butacas", reserva.getButacasSeleccionadas());
+
+	    Step4Model step4 = new Step4Model(reserva);
+	    model.addAttribute("fdateFormateada", step4.getFdateFormateada());
+
+	    return "views/end";
 	}
 }
