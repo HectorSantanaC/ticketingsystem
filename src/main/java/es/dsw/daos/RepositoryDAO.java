@@ -5,15 +5,17 @@ import java.sql.SQLException;
 
 import es.dsw.connections.MySqlConnection;
 
-public class NombrePeliculaDAO {
+public class RepositoryDAO {
 	private MySqlConnection mySqlConnection;
 	
-	public NombrePeliculaDAO() {
+	public RepositoryDAO() {
 		mySqlConnection = new MySqlConnection();
 	}
 	
 	public String getTitulo(int idPelicula) {
+		
 		String titulo = null;
+		
 		mySqlConnection.open();
 		
 		if(!mySqlConnection.isError()) {

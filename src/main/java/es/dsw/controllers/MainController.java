@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import es.dsw.daos.NombrePeliculaDAO;
-import es.dsw.daos.SesionProgramadaDAO;
+import es.dsw.connections.MySqlConnection;
+import es.dsw.daos.BuyTicketsDAO;
+import es.dsw.daos.RepositoryDAO;
+import es.dsw.daos.SessionDAO;
+import es.dsw.daos.TicketDAO;
 import es.dsw.models.ControlError;
 import es.dsw.models.IndexModel;
 import es.dsw.models.Reserva;
-import es.dsw.models.Sesion;
+import es.dsw.models.SessionFilm;
 import es.dsw.models.Step1Model;
 import es.dsw.models.Step3Model;
 import es.dsw.models.Step4Model;
@@ -54,13 +57,13 @@ public class MainController {
 	}
 	
 	@GetMapping(value= {"/step1"})
-	public String step1(Model model) {
+	public String step1(@ModelAttribute Reserva reserva, Model model) {
 		DayOfWeek dia = LocalDate.now().getDayOfWeek();
 
 		// Conexión a base de datos para recoger el idPelicula, nº de sala e idSesion
-		SesionProgramadaDAO sesionProgramadaDAO = new SesionProgramadaDAO();
+		SessionDAO sessionDAO = new SessionDAO();
 		
-		List<Sesion> listaSesiones = sesionProgramadaDAO.getAll();
+		List<SessionFilm> listaSesiones = sessionDAO.getAll();
 		
 		// Limitar la cantidad de sesiones según el día
 	    int numSalas = Step1Model.getNumSalas(dia);
@@ -71,6 +74,7 @@ public class MainController {
 		model.addAttribute("sesiones", listaSesiones);
 		model.addAttribute("precioPeliculas", Step1Model.getPrecioPeliculas(dia));
 		
+		reserva.setPrecioEntrada(Step1Model.getPrecioPeliculas(dia));
 		
 		return "views/step1";
 	}
@@ -79,6 +83,7 @@ public class MainController {
 	public String step2(@ModelAttribute Reserva reserva,
 						@RequestParam(defaultValue="0") int idPelicula,
 						@RequestParam(defaultValue="0") int sala,
+						@RequestParam(defaultValue="0") int idSesion,
 						@RequestParam(defaultValue="0") int codError,
 						Model model) {
 		
@@ -89,6 +94,7 @@ public class MainController {
 	    
 	    reserva.setIdPelicula(idPelicula);
 	    reserva.setSala(sala);
+	    reserva.setIdSesion(idSesion);
 	    		
 		ControlError objError = new ControlError(codError);
 		
@@ -158,8 +164,8 @@ public class MainController {
 		model.addAttribute("butacasSeleccionadas", butacas);
 		
 		// Conexión a base de datos para recoger el nombre de la película
-		NombrePeliculaDAO nombrePeliculaDAO = new NombrePeliculaDAO();
-		String titulo = nombrePeliculaDAO.getTitulo(reserva.getIdPelicula());
+		RepositoryDAO repositoryDAO = new RepositoryDAO();
+		String titulo = repositoryDAO.getTitulo(reserva.getIdPelicula());
 		reserva.setPelicula(titulo);
 		
 		model.addAttribute("pelicula", titulo);
@@ -196,10 +202,46 @@ public class MainController {
 	public String insert(@ModelAttribute Reserva reserva,
 						 Model model) {
 		
-		SesionProgramadaDAO dao = new SesionProgramadaDAO();
-	    dao.setUpdate(reserva);
+		MySqlConnection mySqlConnection = new MySqlConnection(false); // autocommit desactivado
+		mySqlConnection.open();
+		
+		try {
+	        if (mySqlConnection.isError()) {
+	            throw new RuntimeException(mySqlConnection.msgError());
+	        }
 
-	    // VOLVER A CARGAR LOS DATOS NECESARIOS
+	        // Crear DAOs usando la misma conexión
+	        BuyTicketsDAO buyTicketsDAO = new BuyTicketsDAO(mySqlConnection);
+	        TicketDAO ticketDAO = new TicketDAO(mySqlConnection);
+
+	        // Insertar compra
+	        int idBuyTicket = buyTicketsDAO.insertBuyTickets(reserva);
+
+	        if (idBuyTicket <= 0) {
+	            throw new RuntimeException("Error insertando compra");
+	        }
+
+	        // Insertar tickets (1 por butaca)
+	        int idSesion = reserva.getIdSesion();
+	        List<String> codigosTickets = ticketDAO.insertTicket(reserva, idSesion, idBuyTicket);
+
+	        if (codigosTickets.size() != reserva.getButacasSeleccionadas().size()) {
+	            throw new RuntimeException("Error insertando tickets");
+	        }
+	        
+	        model.addAttribute("codigosTickets", codigosTickets);
+
+	        // TODO OK → commit
+	        mySqlConnection.commit();
+	    } catch (Exception e) {
+	        // ERROR → rollback
+	    	mySqlConnection.rollback();
+	        System.out.println("Rollback: " + e.getMessage());
+	    } finally {
+	    	mySqlConnection.close();
+	    }
+		
+		// Volver a mostrar los datos
 	    model.addAttribute("reserva", reserva);
 	    model.addAttribute("butacas", reserva.getButacasSeleccionadas());
 

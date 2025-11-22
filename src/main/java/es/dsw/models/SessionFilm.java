@@ -1,11 +1,11 @@
 package es.dsw.models;
 
-public class Sesion {
+public class SessionFilm {
 	private int numSala;
 	private int idPelicula;
 	private int idSesion;
 	
-	public Sesion() {
+	public SessionFilm() {
 		super();
 	}
 	

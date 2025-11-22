@@ -42,7 +42,7 @@ public class Step4Model {
 		
 	// Calcular el precio total de menores
 	public double totalMenores() {		
-		return precioDia() * reserva.getFnumentradasmen();
+		return 3.5 * reserva.getFnumentradasmen();
 	}
 		
 	// Calcular el total de adultos y menores

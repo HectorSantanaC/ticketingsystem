@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Reserva {
+	private int idSesion;
 	private int sala;
 	private int idPelicula;
 	private String fnom;
@@ -21,9 +22,16 @@ public class Reserva {
 	private String fAnioCaduca;
 	private String fccstarjeta;
 	private List<String> butacasSeleccionadas = new ArrayList<>();
+	private double precioEntrada;
 	private double precioTotal;
 	
 	// Getter y Setters
+	public int getIdSesion() {
+		return idSesion;
+	}
+	public void setIdSesion(int idSesion) {
+		this.idSesion = idSesion;
+	}
 	public int getSala() {
 		return sala;
 	}
@@ -125,6 +133,12 @@ public class Reserva {
 	}
 	public void setButacasSeleccionadas(List<String> butacasSeleccionadas) {
 		this.butacasSeleccionadas = butacasSeleccionadas;
+	}
+	public double getPrecioEntrada() {
+		return precioEntrada;
+	}
+	public void setPrecioEntrada(double precioEntrada) {
+		this.precioEntrada = precioEntrada;
 	}
 	public double getPrecioTotal() {
 		return precioTotal;
